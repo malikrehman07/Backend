@@ -3,7 +3,7 @@ const router = express.Router();
 const Donation = require('../models/donations');
 const { verifyToken, verifyAdmin, verifyCustomer } = require('../middleware/auth');
 
-router.get("/donations", verifyToken, verifyAdmin, async (req, res) => {
+router.get("/donations", async (req, res) => {
     try {
         const donations = await Donation.find().sort({ createdAt: -1 });
         res.status(200).json({ message: "donations fetched", donations, isError: false });

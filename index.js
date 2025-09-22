@@ -7,7 +7,10 @@ const Auth = require("./routers/auth")
 const Compaigns = require("./routers/compaigns")
 const Donations = require("./routers/donations")
 const Donors = require("./routers/donors")
-const Profile = require("./routers/profile")
+const Contact = require("./routers/contact")
+const { STRIPE_KEY } = process.env
+
+const stripe = require('stripe')(STRIPE_KEY);
 
 
 const { PORT = 8000 } = process.env
@@ -21,7 +24,20 @@ app.use('/auth', Auth)
 app.use('/compaigns', Compaigns)
 app.use('/', Donations)
 app.use('/dashboard', Donors)
-app.use("/dashboard/profile", Profile);
+app.use("/contact", Contact)
+
+app.post("/create-payment-intent", async (req, res) => {
+    const { amount } = req.body
+    try {
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount,
+            currency: 'usd',
+        })
+        res.send({ clientSecret: paymentIntent.client_secret })
+    } catch (err) {
+        res.status(500).send({ error: err.message })
+    }
+})
 
 app.get('/', (req, res) => {
     const currentTime = new Date().toISOString()

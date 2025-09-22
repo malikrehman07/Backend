@@ -44,7 +44,7 @@ const verifyCustomer = async (req, res, next) => {
         const user = await Users.findOne({ uid: req.uid });
 
         if (!user || user.role !== "Donor") {
-            return res.status(403).json({ message: "DOnor access only", isError: true });
+            return res.status(403).json({ message: "Donor access only", isError: true });
         }
 
         next();

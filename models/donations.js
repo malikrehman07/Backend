@@ -12,6 +12,11 @@ const schema = new Schema({
     status: { type: String, default: "Completed" },
     amount: { type: Number, required: true },
     paymentIntentId: { type: String, required: true },
+    compaign: {
+        compaignId: { type: String, required: true },
+        title: { type: String, required: true },
+        image: { type: String, required: true },
+    },
 }, { timestamps: true });
 
 const Donations = model("donations", schema);

@@ -16,7 +16,7 @@ const stripe = require('stripe')(STRIPE_KEY);
 const { PORT = 8000 } = process.env
 connectDB()
 
-const corsOption = { origin: 'http://localhost:5173' }
+const corsOption = { origin: 'https://givehope-eta.vercel.app' }
 app.use(cors(corsOption))
 app.use(express.json())
 

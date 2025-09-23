@@ -18,13 +18,14 @@ router.post('/add', verifyToken, verifyAdmin, async (req, res) => {
 
 router.get("/my-compaigns", verifyToken, verifyAdmin, async (req, res) => {
     try {
-        const ngoId = req.user.uid; // taken from JWT after login
-        const compaign = await Compaign.find({ uid: ngoId });
-        res.status(200).json({ message: "compaigns fetched successfully", compaign, isError: false });
+        const userId = req.user.id; // NGO’s uid from JWT
+        const compaigns = await Compaign.find({ uid: userId }); // ✅ match by uid
+        res.json(compaigns);
     } catch (err) {
-        res.status(500).json({ message: "Error fetching compaign", error: err.message, isError: true });
+        res.status(500).json({ message: err.message });
     }
 });
+
 
 router.get("/read", async (req, res) => {
     try {

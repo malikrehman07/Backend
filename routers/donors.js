@@ -23,7 +23,18 @@ router.get("/my-donations", verifyToken, verifyCustomer, async (req, res) => {
     }
 });
 
-
+// Get donations for logged-in NGO’s campaigns
+router.get("/ngo-donations", verifyToken, verifyAdmin, async (req, res) => {
+    try {
+        const donations = await Donation.find({ ngoId: req.uid }) // filter by NGO
+            .populate("donorId", "fullName email")  // show donor details
+            .populate("campaignId", "title");       // show campaign title
+        res.status(200).json(donations);
+    } catch (error) {
+        console.error("Error fetching NGO donations:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
 
 
 // ✅ DELETE ORDER BY ID (Admin Only)

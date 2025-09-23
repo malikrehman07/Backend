@@ -15,6 +15,18 @@ router.post('/add', verifyToken, verifyAdmin, async (req, res) => {
         console.error("❌ Product creation failed:", err);
     }
 });
+// Get NGO's own campaigns
+router.get("/my-campaigns", verifyToken, verifyAdmin, async (req, res) => {
+    try {
+        const compaigns = await Compaign.find({ ngoId: req.uid }); // filter by logged-in NGO
+        res.status(200).json(compaigns);
+    } catch (error) {
+        console.error("Error fetching NGO compaigns:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+
 router.get("/read", async (req, res) => {
     try {
         const compaigns = await Compaign.find().sort({ createdAt: -1 });

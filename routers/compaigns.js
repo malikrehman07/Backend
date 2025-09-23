@@ -15,21 +15,6 @@ router.post('/add', verifyToken, verifyAdmin, async (req, res) => {
         console.error("❌ Product creation failed:", err);
     }
 });
-
-router.get("/my-compaigns", verifyToken, async (req, res) => {
-    if (req.user.role !== "NGO") {
-        return res.status(403).json({ message: "Access denied: NGOs only" });
-    }
-    try {
-        const userId = req.user.id; // NGO’s uid from JWT
-        const compaigns = await Compaign.find({ uid: userId }); // ✅ match by uid
-        res.json(compaigns);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-});
-
-
 router.get("/read", async (req, res) => {
     try {
         const compaigns = await Compaign.find().sort({ createdAt: -1 });
@@ -44,7 +29,7 @@ router.get("/read/:id", async (req, res) => {
         if (!compaign) return res.status(404).json({ message: "compaign not found", isError: true });
         res.status(200).json({ message: "compaign fetched successfully", compaign, isError: false });
     } catch (error) {
-        res.status(500).json({ message: "Error fetching compaign", error: error.message, isError: true });
+        res.status(500).json({ message: "Error fetching product", error: error.message, isError: true });
     }
 });
 

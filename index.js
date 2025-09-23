@@ -8,6 +8,7 @@ const Compaigns = require("./routers/compaigns")
 const Donations = require("./routers/donations")
 const Donors = require("./routers/donors")
 const Contact = require("./routers/contact")
+const Search = require("./routers/search")
 const { STRIPE_KEY } = process.env
 
 const stripe = require('stripe')(STRIPE_KEY);
@@ -25,6 +26,7 @@ app.use('/compaigns', Compaigns)
 app.use('/', Donations)
 app.use('/dashboard', Donors)
 app.use("/contact", Contact)
+app.use("/", Search)
 
 app.post("/create-payment-intent", async (req, res) => {
     const { amount } = req.body

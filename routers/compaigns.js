@@ -16,7 +16,10 @@ router.post('/add', verifyToken, verifyAdmin, async (req, res) => {
     }
 });
 
-router.get("/my-compaigns", verifyToken, verifyAdmin, async (req, res) => {
+router.get("/my-compaigns", verifyToken, async (req, res) => {
+    if (req.user.role !== "NGO") {
+        return res.status(403).json({ message: "Access denied: NGOs only" });
+    }
     try {
         const userId = req.user.id; // NGO’s uid from JWT
         const compaigns = await Compaign.find({ uid: userId }); // ✅ match by uid

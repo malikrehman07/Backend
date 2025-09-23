@@ -25,33 +25,32 @@ router.get("/my-donations", verifyToken, verifyCustomer, async (req, res) => {
 });
 
 // Get donations for logged-in NGO’s campaigns
-router.get("/ngo-donations", verifyToken, verifyAdmin, async (req, res) => {
+// GET donations for my NGO's compaigns
+router.get("/ngo-donations", verifyToken, async (req, res) => {
     try {
-        if (!req.user || !req.user.uid) {
-            return res.status(401).json({ error: "Unauthorized" });
+        // Make sure only NGOs can access
+        if (req.role !== "NGO") {
+            return res.status(403).json({ message: "Access denied: NGO only" });
         }
 
-        const ngoId = req.user.uid;
+        // Step 1: Find all compaigns created by this NGO
+        const myCompaigns = await Compaign.find({ uid: req.uid }).select("_id");
 
-        // Get campaigns of this NGO
-        const compaigns = await Compaign.find({ uid: ngoId }).select("_id");
-        const compaignIds = compaigns.map(c => c._id.toString());
+        // Step 2: Extract their IDs
+        const compaignIds = myCompaigns.map(c => c._id);
 
-        if (!compaignIds.length) {
-            return res.json([]); // No campaigns → no donations
-        }
+        // Step 3: Find donations where compaignId is in my compaigns
+        const donations = await Donation.find({ compaignId: { $in: compaignIds } })
+            .populate("compaign", "title image") // populate compaign details
+            .sort({ createdAt: -1 });
 
-        // Get donations for those campaigns
-        const donations = await Donation.find({
-            "compaign.compaignId": { $in: compaignIds }
-        });
-
-        res.json({ donations });
-    } catch (err) {
-        console.error("Error in /dashboard/ngo-donations:", err);
-        res.status(500).json({ error: "Server error", details: err.message });
+        res.status(200).json({ donations });
+    } catch (error) {
+        console.error("Error fetching NGO donations:", error);
+        res.status(500).json({ message: "Failed to fetch donations" });
     }
 });
+
 
 
 

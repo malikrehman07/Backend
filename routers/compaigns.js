@@ -18,8 +18,8 @@ router.post('/add', verifyToken, verifyAdmin, async (req, res) => {
 // Get NGO's own campaigns
 router.get("/my-campaigns", verifyToken, verifyAdmin, async (req, res) => {
     try {
-        const compaigns = await Compaign.find({ ngoId: req.uid }); // filter by logged-in NGO
-        res.status(200).json(compaigns);
+        const compaign = await Compaign.find(req.params.uid); // filter by logged-in NGO
+        res.status(200).json({ message: "compaign fetched successfully", compaign, isError: false });
     } catch (error) {
         console.error("Error fetching NGO compaigns:", error);
         res.status(500).json({ message: "Server error" });

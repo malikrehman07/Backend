@@ -15,17 +15,16 @@ router.post('/add', verifyToken, verifyAdmin, async (req, res) => {
         console.error("❌ Product creation failed:", err);
     }
 });
-// Get NGO's own campaigns
-router.get("/my-campaigns", verifyToken, verifyAdmin, async (req, res) => {
+
+router.get("/my-compaigns", verifyToken, verifyAdmin, async (req, res) => {
     try {
-        const compaign = await Compaign.find(req.params.uid); // filter by logged-in NGO
-        res.status(200).json({ message: "compaign fetched successfully", compaign, isError: false });
-    } catch (error) {
-        console.error("Error fetching NGO compaigns:", error);
-        res.status(500).json({ message: "Server error" });
+        const ngoId = req.user.uid; // taken from JWT after login
+        const compaign = await Compaign.find({ uid: ngoId });
+        res.status(200).json({ message: "compaigns fetched successfully", compaign, isError: false });
+    } catch (err) {
+        res.status(500).json({ message: "Error fetching compaign", error: err.message, isError: true });
     }
 });
-
 
 router.get("/read", async (req, res) => {
     try {
@@ -41,7 +40,7 @@ router.get("/read/:id", async (req, res) => {
         if (!compaign) return res.status(404).json({ message: "compaign not found", isError: true });
         res.status(200).json({ message: "compaign fetched successfully", compaign, isError: false });
     } catch (error) {
-        res.status(500).json({ message: "Error fetching product", error: error.message, isError: true });
+        res.status(500).json({ message: "Error fetching compaign", error: error.message, isError: true });
     }
 });
 
